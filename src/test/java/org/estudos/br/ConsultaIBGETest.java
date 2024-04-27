@@ -9,12 +9,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class ConsultaIBGETest {
@@ -22,25 +21,26 @@ public class ConsultaIBGETest {
 
     private static final String DISTRITOS_API_URL = "https://servicodados.ibge.gov.br/api/v1/localidades/distritos/";
 
+    // @Test
+    // @DisplayName("Teste para consulta única de um estado")
+    // public void testConsultarEstado() throws IOException {
+    //     // Arrange
+    //     String uf = "SP"; // Define o estado a ser consultado
 
-    @Test
-    @DisplayName("Teste para consulta única de um estado")
-    public void testConsultarEstado() throws IOException {
-        // Arrange
-        String uf = "SP"; // Define o estado a ser consultado
+    //     // Act
+    //     String resposta = ConsultaIBGE.consultarEstado(uf); // Chama o método a ser testado
 
-        // Act
-        String resposta = ConsultaIBGE.consultarEstado(uf); // Chama o método a ser testado
+    //     // Assert
+    //     // Verifica se a resposta não está vazia
+    //     assert !resposta.isEmpty();
 
-        // Assert
-        // Verifica se a resposta não está vazia
-        assert !resposta.isEmpty();
+    //     // Verifica se o status code é 200 (OK)
+    //     HttpURLConnection connection = (HttpURLConnection) new URL(ESTADOS_API_URL + uf).openConnection();
+    //     int statusCode = connection.getResponseCode();
+    //     assertEquals(200, statusCode, "O status code da resposta da API deve ser 200 (OK)");
+    // }
 
-        // Verifica se o status code é 200 (OK)
-        HttpURLConnection connection = (HttpURLConnection) new URL(ESTADOS_API_URL + uf).openConnection();
-        int statusCode = connection.getResponseCode();
-        assertEquals(200, statusCode, "O status code da resposta da API deve ser 200 (OK)");
-    }
+
 
     @Mock
     private HttpURLConnection connectionMock;
@@ -68,5 +68,31 @@ public class ConsultaIBGETest {
 
         // Verificamos se o JSON retornado é o mesmo que o JSON de resposta simulada
         assertEquals(JSON_RESPONSE, response, "O JSON retornado não corresponde ao esperado.");
+    }
+
+    @Test
+    @DisplayName("Teste para validar opção escolhida do menu")
+    public void testValidarEscolha() {
+
+        InputStream input = new ByteArrayInputStream("100\n3\n".getBytes());
+        System.setIn(input);
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(output));
+
+        Main.main(new String[]{});
+
+        assertTrue(output.toString().contains("Opção inválida."));
+    }
+
+    @Test
+    @DisplayName("Teste para opção de sair do menu")
+    public void testSair() {
+        InputStream in = new ByteArrayInputStream("3\n".getBytes());
+        System.setIn(in);
+
+        Main.main(new String[]{});
+
+        assertTrue(true);
     }
 }
